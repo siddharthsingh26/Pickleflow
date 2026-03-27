@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PickleFlow Social</title>
+<link href="https://fonts.googleapis.com/css2?family=Satisfy&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --G:#1B4D2E;   /* brand dark green */
+  --G2:#246038;
+  --G3:#0d3020;
+  --GA:#2ecc71;  /* accent bright green */
+  --BK:#080c09;
+  --WH:#f5f8f5;
+  --OF:#eef3ee;
+  --GR:#6b7c6e;
+}
+html,body{width:100%;height:100%;overflow:hidden}
+body{
+  background:var(--BK);color:var(--WH);
+  font-family:'DM Sans',sans-serif;
+  position:relative;
+}
+
+/* ── CANVAS FILLS FULL SCREEN ── */
+#three-canvas{
+  position:fixed;inset:0;width:100%;height:100%;z-index:0;
+}
+
+/* ── GRAIN OVERLAY ── */
+.grain{
+  position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.08'/%3E%3C/svg%3E");
+}
+
+/* ── VIGNETTE ── */
+.vignette{
+  position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 40%,rgba(8,12,9,.7) 100%);
+}
+
+/* ── UI LAYER ── */
+.ui{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;pointer-events:none}
+
+/* NAV */
+nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 56px;pointer-events:all;
+  opacity:0;animation:fadeDown .8s .2s forwards;
+}
+.nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+.logo-mark{
+  width:42px;height:42px;background:var(--G);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  box-shadow:0 4px 20px rgba(27,77,46,.5);
+}
+.logo-mark svg{width:24px;height:24px;fill:white}
+.logo-words{display:flex;flex-direction:column;line-height:1}
+.lw1{font-family:'Satisfy',cursive;font-size:20px;color:var(--WH);letter-spacing:.5px}
+.lw2{font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:1px}
+
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.5px;color:rgba(255,255,255,.5);
+  text-decoration:none;transition:color .2s
+}
+.nav-links a:hover{color:var(--WH)}
+.nav-cta{
+  background:var(--G);color:var(--WH);
+  padding:11px 26px;border-radius:8px;
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:.5px;text-decoration:none;
+  box-shadow:0 0 0 1px rgba(46,204,113,.3),0 6px 24px rgba(27,77,46,.4);
+  transition:background .2s,transform .15s,box-shadow .2s
+}
+.nav-cta:hover{background:var(--G2);transform:translateY(-1px);box-shadow:0 0 0 1px rgba(46,204,113,.5),0 10px 30px rgba(27,77,46,.5)}
+
+/* CENTER HERO CONTENT */
+.hero-body{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:0 40px;
+  pointer-events:all;
+}
+
+.coming-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(27,77,46,.6);
+  border:1px solid rgba(46,204,113,.35);
+  padding:7px 18px;border-radius:100px;
+  font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;
+  color:var(--GA);margin-bottom:32px;
+  backdrop-filter:blur(10px);
+  opacity:0;animation:fadeUp .8s .4s forwards;
+}
+.coming-pill::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--GA);flex-shrink:0;
+  box-shadow:0 0 8px var(--GA);
+  animation:blink 1.8s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(52px,8vw,110px);
+  font-weight:800;line-height:.92;letter-spacing:-3px;
+  margin-bottom:8px;
+  opacity:0;animation:fadeUp .9s .55s forwards;
+}
+h1 .script-line{
+  display:block;
+  font-family:'Satisfy',cursive;
+  font-weight:400;font-size:.52em;
+  color:rgba(255,255,255,.55);letter-spacing:2px;
+  margin-bottom:6px;
+}
+h1 .green-word{color:var(--GA)}
+h1 .white-word{color:var(--WH)}
+
+.hero-sub{
+  font-size:16px;color:rgba(255,255,255,.45);
+  max-width:420px;line-height:1.75;font-weight:300;font-style:italic;
+  margin-bottom:48px;
+  opacity:0;animation:fadeUp .9s .7s forwards;
+}
+
+.hero-actions{
+  display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:fadeUp .9s .85s forwards;
+}
+.btn-main{
+  background:var(--G);color:var(--WH);
+  padding:16px 40px;border-radius:10px;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;
+  text-decoration:none;
+  box-shadow:0 0 0 1px rgba(46,204,113,.3),0 10px 32px rgba(27,77,46,.5);
+  transition:all .2s;
+}
+.btn-main:hover{background:var(--G2);transform:translateY(-2px);box-shadow:0 0 0 1px rgba(46,204,113,.5),0 16px 40px rgba(27,77,46,.6)}
+.btn-outline{
+  background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);
+  padding:16px 40px;border-radius:10px;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:600;letter-spacing:.5px;
+  text-decoration:none;backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.12);
+  transition:all .2s;
+}
+.btn-outline:hover{background:rgba(255,255,255,.1);color:var(--WH);border-color:rgba(255,255,255,.25)}
+
+/* BOTTOM BAR */
+.bottom-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px 56px;pointer-events:all;
+  opacity:0;animation:fadeUp .8s 1s forwards;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.bottom-tagline{
+  font-family:'Satisfy',cursive;font-size:15px;
+  color:rgba(255,255,255,.3);letter-spacing:.5px;
+}
+.bottom-links{display:flex;gap:28px}
+.bottom-links a{
+  font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.25);text-decoration:none;transition:color .2s
+}
+.bottom-links a:hover{color:rgba(255,255,255,.6)}
+
+/* SCROLL INDICATOR */
+.scroll-hint{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;z-index:11;
+  opacity:0;animation:fadeUp .8s 1.2s forwards;pointer-events:none;
+}
+.scroll-hint span{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.2)}
+.scroll-mouse{
+  width:22px;height:34px;border:1.5px solid rgba(255,255,255,.15);
+  border-radius:11px;display:flex;align-items:flex-start;justify-content:center;padding-top:6px
+}
+.scroll-dot{
+  width:3px;height:6px;border-radius:3px;background:var(--GA);
+  animation:scrolldot 2s ease-in-out infinite;
+  box-shadow:0 0 6px var(--GA)
+}
+@keyframes scrolldot{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(10px);opacity:0}}
+
+/* SIDE LABELS */
+.side-label{
+  position:fixed;z-index:11;
+  font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;
+  color:rgba(255,255,255,.18);writing-mode:vertical-rl;
+  opacity:0;animation:fadeIn 1s 1.4s forwards;
+}
+.side-label.left{left:20px;top:50%;transform:translateY(-50%) rotate(180deg)}
+.side-label.right{right:20px;top:50%;transform:translateY(-50%)}
+
+/* CORNER LOGO WATERMARK */
+.wm{
+  position:fixed;bottom:28px;right:56px;z-index:11;
+  font-family:'Satisfy',cursive;font-size:11px;
+  color:rgba(255,255,255,.12);letter-spacing:1px;
+  opacity:0;animation:fadeIn 1s 1.5s forwards;
+}
+
+/* ── KEYFRAMES ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:20px 24px}
+  .nav-links{display:none}
+  .bottom-bar{padding:20px 24px;flex-direction:column;gap:12px}
+  .side-label{display:none}
+  h1{font-size:clamp(44px,12vw,80px);letter-spacing:-2px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="three-canvas"></canvas>
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<div class="side-label left">Pickleball · Community · Flow</div>
+<div class="side-label right">Coming Soon · India</div>
+
+<div class="ui">
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 48 56" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="24" cy="20" rx="18" ry="19"/>
+          <rect x="19.5" y="36" width="9" height="18" rx="4.5"/>
+          <line x1="19.5" y1="41" x2="28.5" y2="41" stroke="rgba(27,77,46,.5)" stroke-width="1.8"/>
+          <line x1="19.5" y1="46" x2="28.5" y2="46" stroke="rgba(27,77,46,.5)" stroke-width="1.8"/>
+          <circle cx="17" cy="13" r="2.2" fill="rgba(27,77,46,.35)"/>
+          <circle cx="24" cy="13" r="2.2" fill="rgba(27,77,46,.35)"/>
+          <circle cx="31" cy="13" r="2.2" fill="rgba(27,77,46,.35)"/>
+          <circle cx="17" cy="21" r="2.2" fill="rgba(27,77,46,.35)"/>
+          <circle cx="24" cy="21" r="2.2" fill="rgba(27,77,46,.35)"/>
+          <circle cx="31" cy="21" r="2.2" fill="rgba(27,77,46,.35)"/>
+          <circle cx="20" cy="29" r="2.2" fill="rgba(27,77,46,.35)"/>
+          <circle cx="28" cy="29" r="2.2" fill="rgba(27,77,46,.35)"/>
+        </svg>
+      </div>
+      <div class="logo-words">
+        <span class="lw1">Pickleflow</span>
+        <span class="lw2">Social</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">About</a></li>
+      <li><a href="#">Sessions</a></li>
+      <li><a href="#">Community</a></li>
+    </ul>
+    <a class="nav-cta" href="#">Get Early Access</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero-body">
+    <div class="coming-pill">Coming Soon · India</div>
+    <h1>
+      <span class="script-line">where pickleball meets</span>
+      <span class="green-word">Community</span>
+      <span class="white-word">&amp; Flow</span>
+    </h1>
+    <p class="hero-sub">A social pickleball experience built for people who love the game — and the people who play it.</p>
+    <div class="hero-actions">
+      <a class="btn-main" href="#">Join the Waitlist</a>
+      <a class="btn-outline" href="https://www.linkedin.com/company/pickleflow-social/" target="_blank">Follow on LinkedIn</a>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-bar">
+    <span class="bottom-tagline">Pickleflow Social © 2025</span>
+    <div class="bottom-links">
+      <a href="https://www.linkedin.com/company/pickleflow-social/" target="_blank">LinkedIn</a>
+      <a href="#">Instagram</a>
+      <a href="#">WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<!-- SCROLL HINT -->
+<div class="scroll-hint">
+  <div class="scroll-mouse"><div class="scroll-dot"></div></div>
+  <span>scroll</span>
+</div>
+
+<div class="wm">Pickleflow Social</div>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+
+const canvas = document.getElementById('three-canvas');
+const renderer = new THREE.WebGLRenderer({canvas, alpha:false, antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x080c09);
+scene.fog = new THREE.FogExp2(0x080c09, 0.045);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 0.5, 9);
+
+/* ── LIGHTING ── */
+scene.add(new THREE.AmbientLight(0x1a3a22, 1.2));
+
+// Key light — warm green from above
+const key = new THREE.DirectionalLight(0x4aaa70, 2.5);
+key.position.set(2, 8, 5);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+scene.add(key);
+
+// Green fill from side
+const fill = new THREE.PointLight(0x1B4D2E, 6, 20);
+fill.position.set(-5, 2, 3);
+scene.add(fill);
+
+// Bright green accent from below
+const rim = new THREE.PointLight(0x2ecc71, 3, 18);
+rim.position.set(0, -4, 2);
+scene.add(rim);
+
+// White highlight
+const spot = new THREE.SpotLight(0xffffff, 1.8, 25, Math.PI/8, 0.5);
+spot.position.set(0, 10, 4);
+spot.castShadow = true;
+scene.add(spot);
+
+// Right rim
+const rrim = new THREE.PointLight(0x0d3020, 4, 16);
+rrim.position.set(5, 1, -2);
+scene.add(rrim);
+
+/* ── GROUND PLANE (reflection pool) ── */
+const groundGeo = new THREE.PlaneGeometry(40, 40);
+const groundMat = new THREE.MeshStandardMaterial({
+  color: 0x080c09, roughness: 0.1, metalness: 0.9,
+  envMapIntensity: 1,
+});
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI/2;
+ground.position.y = -3.8;
+ground.receiveShadow = true;
+scene.add(ground);
+
+/* ── PARTICLE SYSTEM (floating specks) ── */
+const pCount = 180;
+const pGeo = new THREE.BufferGeometry();
+const pPos = new Float32Array(pCount * 3);
+const pSpeeds = [];
+for(let i=0;i<pCount;i++){
+  pPos[i*3]   = (Math.random()-0.5)*18;
+  pPos[i*3+1] = (Math.random()-0.5)*12;
+  pPos[i*3+2] = (Math.random()-0.5)*10;
+  pSpeeds.push((Math.random()-.5)*.004, Math.random()*.003+.001, 0);
+}
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const pMat = new THREE.PointsMaterial({color:0x2ecc71, size:0.04, transparent:true, opacity:.55});
+const particles = new THREE.Points(pGeo, pMat);
+scene.add(particles);
+
+/* ── BUILD ONE PADDLE ── */
+function rrect(w, h, r){
+  const s = new THREE.Shape();
+  s.moveTo(-w/2+r, -h/2);
+  s.lineTo(w/2-r, -h/2); s.quadraticCurveTo(w/2,-h/2, w/2,-h/2+r);
+  s.lineTo(w/2, h/2-r);  s.quadraticCurveTo(w/2, h/2, w/2-r, h/2);
+  s.lineTo(-w/2+r, h/2); s.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);
+  s.lineTo(-w/2,-h/2+r); s.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
+  return s;
+}
+
+function makePaddle(){
+  const g = new THREE.Group();
+
+  // ─ FACE BODY ─
+  const faceShape = rrect(1.6, 2.0, 0.24);
+  const faceGeo = new THREE.ExtrudeGeometry(faceShape, {
+    depth: 0.12, bevelEnabled: true,
+    bevelThickness: 0.028, bevelSize: 0.028, bevelSegments: 10
+  });
+  const faceMat = new THREE.MeshStandardMaterial({
+    color: 0x0d2a18, roughness: 0.18, metalness: 0.88,
+    envMapIntensity: 1.2,
+  });
+  const face = new THREE.Mesh(faceGeo, faceMat);
+  face.position.y = 0.72;
+  face.castShadow = true;
+  g.add(face);
+
+  // ─ SURFACE PANEL (brand green) ─
+  const panelShape = rrect(1.3, 1.68, 0.18);
+  const panelGeo = new THREE.ExtrudeGeometry(panelShape, {depth:.018, bevelEnabled:false});
+  const panelMat = new THREE.MeshStandardMaterial({
+    color: 0x1B4D2E, roughness: 0.22, metalness: 0.55,
+    emissive: 0x0d2a18, emissiveIntensity: 0.4,
+  });
+  const panel = new THREE.Mesh(panelGeo, panelMat);
+  panel.position.set(0, 0.72, 0.12);
+  g.add(panel);
+
+  // ─ EDGE BAND (white/silver rim) ─
+  const outer = rrect(1.63, 2.03, 0.25);
+  const inner = rrect(1.50, 1.90, 0.22);
+  outer.holes.push(inner);
+  const edgeGeo = new THREE.ExtrudeGeometry(outer, {depth:.13, bevelEnabled:false});
+  const edgeMat = new THREE.MeshStandardMaterial({
+    color: 0xe8f0eb, roughness: 0.08, metalness: 0.92,
+    emissive: 0x2ecc71, emissiveIntensity: 0.04,
+  });
+  const edge = new THREE.Mesh(edgeGeo, edgeMat);
+  edge.position.set(0, 0.72, -0.008);
+  g.add(edge);
+
+  // ─ HOLES GRID ─
+  const holeMat = new THREE.MeshStandardMaterial({color:0x030806, roughness:.95, metalness:.05});
+  const holeGeo = new THREE.CylinderGeometry(0.042, 0.042, 0.2, 10);
+  const cols=5, rows=8;
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const h = new THREE.Mesh(holeGeo, holeMat);
+    h.rotation.x = Math.PI/2;
+    h.position.set(-0.48 + c*0.24, 0.22 + r*0.22, 0.13);
+    g.add(h);
+  }
+
+  // ─ HOLE EDGE RINGS (green glow) ─
+  const ringGeo = new THREE.RingGeometry(0.044, 0.062, 10);
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: 0x2ecc71, transparent:true, opacity:.18, side:THREE.DoubleSide
+  });
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const rg = new THREE.Mesh(ringGeo, ringMat);
+    rg.position.set(-0.48+c*0.24, 0.22+r*0.22, 0.195);
+    g.add(rg);
+  }
+
+  // ─ LOGO TEXT ─
+  const tc = document.createElement('canvas');
+  tc.width = 512; tc.height = 160;
+  const ctx = tc.getContext('2d');
+  ctx.clearRect(0,0,512,160);
+
+  // Brand name in Satisfy-style
+  ctx.font = '600 54px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.0)';
+  ctx.fillRect(0,0,512,160);
+  // glow
+  ctx.shadowColor = '#2ecc71'; ctx.shadowBlur = 24;
+  ctx.fillStyle = 'rgba(245,248,245,0.72)';
+  ctx.font = 'italic 500 52px Georgia';
+  ctx.fillText('Pickleflow', 256, 72);
+  ctx.font = '600 18px Arial';
+  ctx.letterSpacing = '8px';
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillText('S O C I A L', 256, 110);
+
+  const logoTex = new THREE.CanvasTexture(tc);
+  const logoMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.1, 0.34),
+    new THREE.MeshBasicMaterial({map:logoTex, transparent:true, depthWrite:false})
+  );
+  logoMesh.position.set(0, 0.3, 0.195);
+  g.add(logoMesh);
+
+  // ─ THROAT ─
+  const throatGeo = new THREE.CylinderGeometry(0.24, 0.175, 0.42, 20);
+  const throatMat = new THREE.MeshStandardMaterial({
+    color:0x0d2a18, roughness:.3, metalness:.8, emissive:0x1B4D2E, emissiveIntensity:.12
+  });
+  const throat = new THREE.Mesh(throatGeo, throatMat);
+  throat.position.y = -0.33;
+  g.add(throat);
+
+  // ─ HANDLE ─
+  const handleGeo = new THREE.CylinderGeometry(0.125, 0.11, 1.38, 20);
+  const handleMat = new THREE.MeshStandardMaterial({
+    color:0x111a13, roughness:.45, metalness:.5
+  });
+  const handle = new THREE.Mesh(handleGeo, handleMat);
+  handle.position.y = -1.22;
+  g.add(handle);
+
+  // ─ GRIP WRAP ─
+  for(let i=0;i<10;i++){
+    const tGeo = new THREE.CylinderGeometry(0.13, 0.13, 0.1, 20);
+    const col  = i%2===0 ? 0x0d2a18 : 0x1B4D2E;
+    const emit = i%2===0 ? 0x0a1f10 : 0x1B4D2E;
+    const tMat = new THREE.MeshStandardMaterial({
+      color:col, roughness:.65, metalness:.25,
+      emissive:emit, emissiveIntensity:i%2===0?.05:.2,
+    });
+    const tape = new THREE.Mesh(tGeo, tMat);
+    tape.position.y = -0.64 - i*0.1;
+    g.add(tape);
+  }
+
+  // ─ BUTT CAP ─
+  const buttGeo = new THREE.CylinderGeometry(0.155, 0.135, 0.09, 20);
+  const buttMat = new THREE.MeshStandardMaterial({
+    color:0xe8f0eb, roughness:.08, metalness:.92,
+    emissive:0x2ecc71, emissiveIntensity:.25,
+  });
+  const butt = new THREE.Mesh(buttGeo, buttMat);
+  butt.position.y = -1.95;
+  g.add(butt);
+
+  // ─ SHADOW CATCHER ─
+  g.traverse(m=>{ if(m.isMesh){ m.castShadow=true; m.receiveShadow=true; }});
+
+  return g;
+}
+
+/* ── CREATE TWO PADDLES ── */
+const leftPaddle  = makePaddle();
+const rightPaddle = makePaddle();
+
+// Position & initial rotation
+leftPaddle.position.set(-2.4, 0.2, 0);
+leftPaddle.rotation.set(0.1, 0.35, 0.28);
+
+rightPaddle.position.set(2.4, 0.2, 0);
+rightPaddle.rotation.set(0.1, -0.35, -0.28);
+
+scene.add(leftPaddle);
+scene.add(rightPaddle);
+
+/* ── PICKLEBALL (center) ── */
+const ballGeo = new THREE.SphereGeometry(0.22, 32, 32);
+const ballMat = new THREE.MeshStandardMaterial({
+  color: 0xf5f8f5, roughness: 0.35, metalness: 0.1,
+  emissive: 0x2ecc71, emissiveIntensity: 0.04,
+});
+const ball = new THREE.Mesh(ballGeo, ballMat);
+ball.position.set(0, 0.2, 1.2);
+ball.castShadow = true;
+scene.add(ball);
+
+// Holes on ball
+const bhMat = new THREE.MeshStandardMaterial({color:0x0d2a18, roughness:.9});
+const bhGeo = new THREE.SphereGeometry(0.045, 8, 8);
+const bHoleAngles = [
+  [0,0],[Math.PI/3,0],[Math.PI*2/3,0],[Math.PI,0],
+  [Math.PI/6,Math.PI/2],[Math.PI/2,Math.PI/2],[Math.PI*5/6,Math.PI/2],
+  [Math.PI/3,Math.PI],[Math.PI*2/3,Math.PI],[Math.PI/3,Math.PI*3/2],[Math.PI*2/3,Math.PI*3/2],
+];
+bHoleAngles.forEach(([phi,theta])=>{
+  const bh = new THREE.Mesh(bhGeo, bhMat);
+  bh.position.setFromSphericalCoords(0.19, phi, theta);
+  ball.add(bh);
+});
+
+/* ── GROUND GLOW ── */
+const glowGeo = new THREE.PlaneGeometry(6, 6);
+const glowMat = new THREE.MeshBasicMaterial({
+  color: 0x1B4D2E, transparent:true, opacity:.18,
+  side: THREE.DoubleSide
+});
+const glow = new THREE.Mesh(glowGeo, glowMat);
+glow.rotation.x = -Math.PI/2;
+glow.position.y = -3.79;
+scene.add(glow);
+
+/* ── MOUSE PARALLAX ── */
+let mouseX=0, mouseY=0, targetX=0, targetY=0;
+document.addEventListener('mousemove', e=>{
+  mouseX = (e.clientX/window.innerWidth - 0.5) * 2;
+  mouseY = (e.clientY/window.innerHeight - 0.5) * 2;
+});
+
+/* ── ANIMATE ── */
+let t=0;
+function animate(){
+  requestAnimationFrame(animate);
+  t += 0.012;
+
+  // Smooth parallax
+  targetX += (mouseX - targetX) * 0.04;
+  targetY += (mouseY - targetY) * 0.04;
+  camera.position.x = targetX * 0.6;
+  camera.position.y = 0.5 - targetY * 0.3;
+  camera.lookAt(0, 0, 0);
+
+  // Left paddle — float + gentle rotation
+  leftPaddle.position.y  = 0.2 + Math.sin(t) * 0.18;
+  leftPaddle.rotation.z  = 0.28 + Math.sin(t * 0.7) * 0.06;
+  leftPaddle.rotation.y  = 0.35 + Math.sin(t * 0.5) * 0.12;
+  leftPaddle.rotation.x  = 0.1  + Math.sin(t * 0.4) * 0.04;
+
+  // Right paddle — opposite phase
+  rightPaddle.position.y = 0.2 + Math.sin(t + Math.PI) * 0.18;
+  rightPaddle.rotation.z = -0.28 - Math.sin(t * 0.7) * 0.06;
+  rightPaddle.rotation.y = -0.35 - Math.sin(t * 0.5) * 0.12;
+  rightPaddle.rotation.x = 0.1  + Math.sin(t * 0.4 + 0.3) * 0.04;
+
+  // Ball float & spin
+  ball.position.y = 0.2 + Math.sin(t * 1.3) * 0.12;
+  ball.rotation.y = t * 0.4;
+  ball.rotation.x = t * 0.2;
+
+  // Particles drift
+  const pos = particles.geometry.attributes.position.array;
+  for(let i=0;i<pCount;i++){
+    pos[i*3]   += pSpeeds[i*3];
+    pos[i*3+1] += pSpeeds[i*3+1];
+    pos[i*3+2] += pSpeeds[i*3+2];
+    if(pos[i*3+1] > 7)  pos[i*3+1] = -7;
+    if(Math.abs(pos[i*3]) > 10) pos[i*3] *= -1;
+  }
+  particles.geometry.attributes.position.needsUpdate = true;
+  particles.rotation.y = t * 0.02;
+
+  // Pulse fill light
+  fill.intensity = 5 + Math.sin(t * 1.5) * 1.5;
+  rim.intensity  = 2.5 + Math.sin(t * 1.8 + 1) * 1;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+/* ── RESIZE ── */
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+})();
+</script>
+</body>
+</html>
