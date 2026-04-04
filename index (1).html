@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pickleflow Social – Serve. Sweat. Socialise.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --lime:#b8e034; --pink:#e8547a;
+  --cream:#f0e8d4; --white:#ffffff;
+  --black:#060606; --nav:#0a0a0a;
+  --g1:#0a1a06; --g2:#0d1f08; --g3:#12280a;
+  --muted:rgba(240,232,212,.58);
+  --F:'Playfair Display',Georgia,serif;
+  --O:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--cream);font-family:var(--O);font-weight:300;overflow-x:hidden;cursor:none}
+
+/* ── CURSOR ── */
+#cur{width:11px;height:11px;background:var(--lime);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:exclusion;transition:width .18s,height .18s,background .18s}
+body:has(a:hover) #cur,body:has(button:hover) #cur{width:20px;height:20px;background:var(--pink)}
+
+/* ══════════════════════════════════
+   NAV — BSC exact: ham|search [LOGO] btn|bag
+══════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;height:62px;
+  background:rgba(6,6,6,.97);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  transition:border-color .4s;
+}
+nav.scrolled{border-bottom-color:rgba(184,224,52,.2)}
+.nav-left{display:flex;align-items:center;gap:22px}
+.nav-center{position:absolute;left:50%;transform:translateX(-50%);line-height:0}
+.nav-center img{height:44px;width:auto}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-icon{background:none;border:none;cursor:none;color:var(--cream);opacity:.8;transition:opacity .2s,color .2s;padding:4px;display:flex;align-items:center}
+.nav-icon:hover{opacity:1;color:var(--lime)}
+.btn-book{background:var(--lime);color:var(--black);border:none;padding:8px 22px;font-family:var(--O);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border-radius:2px;cursor:none;transition:background .2s,transform .15s}
+.btn-book:hover{background:var(--pink);transform:translateY(-1px)}
+
+/* ══════════════════════════════════
+   HERO — courts.jpg
+══════════════════════════════════ */
+.hero{
+  position:relative;height:100vh;min-height:700px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;overflow:hidden;padding-top:62px;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:url('courts.jpg') center/cover no-repeat;
+  transform:scale(1.08);
+  animation:hzoom 22s ease-in-out infinite alternate;
+}
+@keyframes hzoom{from{transform:scale(1.08)}to{transform:scale(1.15)}}
+.hero-ov{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    rgba(6,6,6,.68) 0%,rgba(6,6,6,.38) 42%,rgba(6,6,6,.9) 100%);
+}
+.hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:22px}
+.hero-logo{width:155px;animation:fdwn .9s ease both;filter:drop-shadow(0 4px 28px rgba(0,0,0,.7))}
+.hero-tagline{
+  font-family:var(--F);font-size:clamp(52px,7.8vw,108px);
+  font-weight:900;font-style:italic;line-height:.98;letter-spacing:-.02em;
+  color:#fff;text-shadow:0 2px 48px rgba(0,0,0,.75);
+  animation:fdwn 1s .12s ease both;
+}
+.hero-tagline em{color:var(--lime);font-style:normal}
+.hero-sub{font-size:12px;letter-spacing:.36em;text-transform:uppercase;color:rgba(255,255,255,.72);text-shadow:0 1px 16px rgba(0,0,0,.8);animation:fdwn 1s .24s ease both}
+.hero-ctas{display:flex;gap:14px;animation:fdwn 1s .36s ease both}
+.btn-p{background:var(--lime);color:var(--black);border:none;padding:15px 40px;font-family:var(--O);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border-radius:2px;cursor:none;transition:background .2s,transform .15s}
+.btn-p:hover{background:var(--pink);transform:translateY(-2px)}
+.btn-g{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.5);padding:15px 40px;font-family:var(--O);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border-radius:2px;cursor:none;transition:border-color .2s,color .2s,transform .15s}
+.btn-g:hover{border-color:var(--lime);color:var(--lime);transform:translateY(-2px)}
+.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2;animation:fdwn 1s .6s ease both}
+.hero-scroll span{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.sline{width:1px;height:50px;background:linear-gradient(to bottom,var(--lime),transparent);animation:sp 2s ease-in-out infinite}
+@keyframes sp{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes fdwn{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+
+/* ══════════════════════════════════
+   TICKER BAR
+══════════════════════════════════ */
+.ticker-bar{
+  position:relative;background:var(--g1);height:52px;overflow:hidden;
+  border-top:1px solid rgba(184,224,52,.14);
+  border-bottom:1px solid rgba(184,224,52,.14);
+}
+.ticker-bar::after{content:'';position:absolute;bottom:0;left:0;height:2px;width:100%;background:linear-gradient(to right,transparent,var(--lime) 30%,transparent 70%,var(--lime),transparent);animation:tbline 5s ease-in-out infinite alternate}
+@keyframes tbline{from{opacity:.3}to{opacity:.9}}
+.ticker-track{display:flex;align-items:center;width:max-content;height:100%;animation:tickscroll 28s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes tickscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center}
+.ticker-item span{font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:rgba(240,232,212,.72);padding:0 36px;white-space:nowrap}
+.ticker-dot{width:6px;height:6px;border-radius:50%;background:var(--lime);flex-shrink:0;box-shadow:0 0 8px var(--lime)}
+
+/* ══════════════════════════════════
+   SHARED UTILS
+══════════════════════════════════ */
+.sec-lbl{font-size:10.5px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--lime);margin-bottom:14px;display:block}
+h2.st{font-family:var(--F);font-size:clamp(40px,5.2vw,78px);font-weight:900;font-style:italic;line-height:1.05;letter-spacing:-.02em;color:#fff}
+h2.st em{color:var(--lime);font-style:normal}
+
+/* ══════════════════════════════════
+   ABOUT
+══════════════════════════════════ */
+.about{padding:120px 10vw;display:grid;grid-template-columns:1fr 1fr;gap:90px;align-items:center}
+.about-l h2.st{margin-bottom:22px}
+.about-l p{font-size:15.5px;line-height:1.88;color:rgba(240,232,212,.82);text-align:justify}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.sbox{background:#0e1a0a;padding:40px 30px;border:1px solid rgba(184,224,52,.1);transition:border-color .3s,transform .3s}
+.sbox:hover{border-color:rgba(184,224,52,.38);transform:translateY(-4px)}
+.snum{font-family:var(--F);font-size:60px;font-weight:900;color:var(--lime);line-height:1}
+.slbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,232,212,.58);margin-top:8px}
+
+/* ══════════════════════════════════
+   FACILITIES MARQUEE — all 5 real photos
+══════════════════════════════════ */
+.fac-sec{padding:80px 0;overflow:hidden}
+.fac-hdr{padding:0 10vw 52px}
+.fac-hdr h2.st{margin-top:10px}
+.mwrap{overflow:hidden}
+.mtrack{display:flex;gap:18px;width:max-content;animation:mq 36s linear infinite}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.fcard{width:340px;flex-shrink:0;position:relative;overflow:hidden;border-radius:3px;cursor:none}
+.fcard img{width:100%;height:460px;object-fit:cover;display:block;filter:brightness(.7);transition:transform .65s ease,filter .4s}
+.fcard:hover img{transform:scale(1.07);filter:brightness(.95)}
+.fcard-info{position:absolute;bottom:0;left:0;right:0;padding:72px 22px 26px;background:linear-gradient(to top,rgba(6,6,6,.97) 0%,transparent 100%)}
+.fcard-info .tag{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--lime);display:block;margin-bottom:5px;font-weight:600}
+.fcard-info h3{font-family:var(--F);font-size:28px;font-weight:700;font-style:italic;color:#fff}
+
+/* ══════════════════════════════════
+   FACILITY DETAIL SECTIONS
+   — alternating image + text blocks
+══════════════════════════════════ */
+.fdetail{display:grid;grid-template-columns:1fr 1fr;min-height:560px}
+.fdetail.reverse .fimg{order:2}
+.fdetail.reverse .ftxt{order:1}
+
+.fimg{position:relative;overflow:hidden}
+.fimg img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.82);transition:transform .7s ease,filter .5s}
+.fimg:hover img{transform:scale(1.04);filter:brightness(.96)}
+/* lime corner accent */
+.fimg::after{content:'';position:absolute;bottom:0;left:0;width:4px;height:60px;background:var(--lime)}
+.fdetail.reverse .fimg::after{left:auto;right:0}
+
+.ftxt{
+  background:var(--g2);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:72px 10%;
+}
+.ftxt h3{font-family:var(--F);font-size:clamp(32px,3.4vw,52px);font-weight:900;font-style:italic;color:#fff;line-height:1.08;margin-bottom:16px}
+.ftxt h3 em{color:var(--lime);font-style:normal}
+.ftxt p{font-size:15.5px;line-height:1.88;color:rgba(240,232,212,.78);text-align:justify;margin-bottom:28px}
+.ftxt-list{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:36px}
+.ftxt-list li{font-size:14px;color:rgba(240,232,212,.88);display:flex;align-items:center;gap:12px}
+.ftxt-list li::before{content:'';width:24px;height:1.5px;background:var(--lime);flex-shrink:0}
+.ftxt .btn-sm{
+  align-self:flex-start;
+  background:transparent;color:var(--lime);
+  border:1.5px solid var(--lime);
+  padding:11px 28px;font-family:var(--O);font-size:11px;
+  font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:2px;cursor:none;transition:background .2s,color .2s,transform .15s;
+}
+.ftxt .btn-sm:hover{background:var(--lime);color:var(--black);transform:translateY(-2px)}
+
+/* ══════════════════════════════════
+   EXPERIENCES — numbered dark-green grid
+══════════════════════════════════ */
+.exp-sec{padding:120px 10vw;background:var(--g1)}
+.exp-hdr{text-align:center;margin-bottom:72px}
+.exp-hdr h2.st{margin-top:10px}
+.exp-hdr .sub{font-size:15px;color:rgba(240,232,212,.6);margin-top:16px;letter-spacing:.04em}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+
+.ecard{
+  position:relative;overflow:hidden;
+  background:var(--g2);padding:48px 36px 44px;min-height:320px;
+  border:1px solid rgba(184,224,52,.07);cursor:none;
+  transition:background .4s,border-color .35s;
+}
+.ecard:hover{background:var(--g3);border-color:rgba(184,224,52,.28)}
+.ecard-ghost{position:absolute;bottom:-28px;right:8px;font-family:var(--F);font-size:158px;font-weight:900;color:rgba(184,224,52,.06);line-height:1;pointer-events:none;user-select:none;transition:color .4s}
+.ecard:hover .ecard-ghost{color:rgba(184,224,52,.13)}
+.ecard-num{font-size:11px;font-weight:700;letter-spacing:.28em;color:var(--lime);margin-bottom:18px;display:block}
+.ecard h3{font-family:var(--F);font-size:clamp(26px,2.4vw,36px);font-weight:700;font-style:italic;color:#fff;line-height:1.15;margin-bottom:14px}
+.ecard p{font-size:14px;line-height:1.75;color:rgba(240,232,212,.7);text-align:justify;max-width:320px}
+.ecard-svg{position:absolute;top:18px;right:18px;opacity:.22;pointer-events:none;transition:opacity .4s}
+.ecard:hover .ecard-svg{opacity:.44}
+.ecard-dot{width:11px;height:11px;border-radius:50%;background:var(--lime);margin-top:28px;box-shadow:0 0 12px var(--lime);opacity:0;transform:scale(0);transition:opacity .35s,transform .35s}
+.ecard:hover .ecard-dot{opacity:1;transform:scale(1)}
+
+/* ══════════════════════════════════
+   SPOTLIGHT — courts
+══════════════════════════════════ */
+.spotlight{padding:120px 10vw;display:grid;grid-template-columns:1.1fr 1fr;gap:90px;align-items:center}
+.tilt-wrap{perspective:900px}
+.tilt-card{position:relative;border-radius:4px;overflow:hidden;transform-style:preserve-3d;transition:transform .08s linear;box-shadow:0 40px 90px rgba(0,0,0,.8)}
+.tilt-card img{width:100%;display:block;filter:brightness(.88)}
+.tilt-badge{position:absolute;top:22px;left:22px;background:var(--lime);color:var(--black);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:7px 16px;border-radius:2px}
+.spot-txt h2.st{margin-bottom:18px}
+.spot-txt p{font-size:15.5px;line-height:1.88;color:rgba(240,232,212,.78);text-align:justify;margin-bottom:34px}
+.feat-list{list-style:none;display:flex;flex-direction:column;gap:13px;margin-bottom:40px}
+.feat-list li{font-size:14.5px;color:#fff;display:flex;align-items:center;gap:14px;font-weight:400}
+.feat-list li::before{content:'';width:28px;height:1.5px;background:var(--lime);flex-shrink:0}
+
+/* ══════════════════════════════════
+   COMMUNITY — exterior.jpg
+══════════════════════════════════ */
+.community{position:relative;height:740px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.comm-bg{position:absolute;inset:0;background:url('exterior.jpg') center/cover no-repeat;transform:scale(1.04);transition:transform .8s ease}
+.community:hover .comm-bg{transform:scale(1.08)}
+.comm-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(6,6,6,.78) 0%,rgba(6,6,6,.44) 50%,rgba(6,6,6,.88) 100%)}
+.comm-content{position:relative;z-index:2;max-width:720px;padding:0 24px}
+.comm-content h2{font-family:var(--F);font-size:clamp(44px,6.5vw,88px);font-weight:900;font-style:italic;line-height:1.04;margin-bottom:20px;color:#fff;text-shadow:0 2px 40px rgba(0,0,0,.7)}
+.comm-content h2 em{color:var(--lime);font-style:normal}
+.comm-content p{font-size:15.5px;line-height:1.82;color:rgba(240,232,212,.78);margin-bottom:38px;text-align:justify}
+.comm-btns{display:flex;gap:14px;justify-content:center}
+
+/* ══════════════════════════════════
+   FOOTER
+══════════════════════════════════ */
+footer{background:#0a0a0a;border-top:1px solid rgba(184,224,52,.12);padding:60px 10vw 36px}
+.foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.foot-brand img{height:52px;margin-bottom:16px}
+.foot-brand p{font-size:13.5px;line-height:1.78;color:rgba(240,232,212,.62);text-align:justify}
+.foot-socials{display:flex;gap:12px;margin-top:20px}
+.foot-socials a{width:38px;height:38px;border:1px solid rgba(240,232,212,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(240,232,212,.58);text-decoration:none;transition:border-color .25s,color .25s}
+.foot-socials a:hover{border-color:var(--lime);color:var(--lime)}
+.foot-col h4{font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--lime);margin-bottom:18px}
+.foot-col a{display:block;font-size:13.5px;color:rgba(240,232,212,.58);text-decoration:none;margin-bottom:11px;transition:color .2s}
+.foot-col a:hover{color:#fff}
+.foot-bot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(240,232,212,.08);padding-top:24px;font-size:12px;color:rgba(240,232,212,.42);letter-spacing:.06em}
+.foot-bot a{color:rgba(240,232,212,.42);text-decoration:none;transition:color .2s}
+.foot-bot a:hover{color:var(--lime)}
+
+/* ══════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════ */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .72s ease,transform .72s ease}
+.rv.on{opacity:1;transform:none}
+.rv1{transition-delay:.1s}.rv2{transition-delay:.2s}.rv3{transition-delay:.3s}
+
+/* GRAIN */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:800;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.022}
+
+@media(max-width:1060px){
+  nav{padding:0 18px}
+  .about{grid-template-columns:1fr;gap:52px;padding:80px 7vw}
+  .fdetail{grid-template-columns:1fr}
+  .fdetail.reverse .fimg,.fdetail.reverse .ftxt{order:unset}
+  .spotlight{grid-template-columns:1fr;gap:52px;padding:80px 7vw}
+  .exp-grid{grid-template-columns:1fr 1fr}
+  .foot-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:700px){
+  .exp-grid{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <div class="nav-left">
+    <button class="nav-icon" aria-label="Menu">
+      <svg width="22" height="16" viewBox="0 0 22 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="0" y1="1" x2="22" y2="1"/><line x1="0" y1="8" x2="22" y2="8"/><line x1="0" y1="15" x2="22" y2="15"/>
+      </svg>
+    </button>
+    <button class="nav-icon" aria-label="Search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+  </div>
+  <div class="nav-center">
+    <img src="logo.png" alt="Pickleflow Social">
+  </div>
+  <div class="nav-right">
+    <button class="btn-book">Book Now</button>
+    <button class="nav-icon" aria-label="Info">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 0 0-8 0v2"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ HERO — courts.jpg ══ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ov"></div>
+  <div class="hero-content">
+    <img src="logo.png" alt="Pickleflow Social" class="hero-logo">
+    <h1 class="hero-tagline">Delhi NCR's First<br><em>Premium Indoor</em><br>Play Destination</h1>
+    <p class="hero-sub">Play &nbsp;·&nbsp; Wellness &nbsp;·&nbsp; Social</p>
+    <div class="hero-ctas">
+      <button class="btn-p">Book a Court</button>
+      <button class="btn-g">Explore Experiences</button>
+    </div>
+  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="sline"></div></div>
+</section>
+
+<!-- ══ TICKER BAR ══ -->
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <div class="ticker-item"><span>Wellness Studio</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Café &amp; Social Space</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Gaming Zone</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Merchandise Shop</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Corporate Events</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>AI Match Analytics</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Pickleball Courts</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Private Celebrations</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Wellness Studio</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Café &amp; Social Space</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Gaming Zone</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Merchandise Shop</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Corporate Events</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>AI Match Analytics</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Pickleball Courts</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>Private Celebrations</span><div class="ticker-dot"></div></div>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<section class="about" id="about">
+  <div class="rv">
+    <span class="sec-lbl">Who We Are</span>
+    <h2 class="st">More than a court.<br>A <em>lifestyle</em>.</h2>
+    <br>
+    <p>Pickleflow Social is Delhi NCR's first premium indoor destination where sport, wellness, and community collide. Whether you're rallying on our professional pickleball courts, unwinding at our café, or breaking a sweat in our wellness studio — every visit is a full experience designed for the city's most active, social crowd.</p>
+  </div>
+  <div class="stat-grid rv rv1">
+    <div class="sbox"><div class="snum">3</div><div class="slbl">Pro Indoor Courts</div></div>
+    <div class="sbox"><div class="snum">5+</div><div class="slbl">Unique Experiences</div></div>
+    <div class="sbox"><div class="snum">AI</div><div class="slbl">Match Analytics</div></div>
+    <div class="sbox"><div class="snum">∞</div><div class="slbl">Community</div></div>
+  </div>
+</section>
+
+<!-- ══ FACILITIES MARQUEE ══ -->
+<section class="fac-sec" id="fac">
+  <div class="fac-hdr rv">
+    <span class="sec-lbl">Our Facilities</span>
+    <h2 class="st">Everything <em>under one roof</em></h2>
+  </div>
+  <div class="mwrap">
+    <div class="mtrack" id="mtrack">
+      <div class="fcard"><img src="courts.jpg" alt="Pickleball Arena"><div class="fcard-info"><span class="tag">Sport</span><h3>Pickleball Arena</h3></div></div>
+      <div class="fcard"><img src="cafe.jpg" alt="Café &amp; Social"><div class="fcard-info"><span class="tag">Dining</span><h3>Café &amp; Social</h3></div></div>
+      <div class="fcard"><img src="wellness.jpg" alt="Wellness Studio"><div class="fcard-info"><span class="tag">Wellness</span><h3>Wellness Studio</h3></div></div>
+      <div class="fcard"><img src="shop.jpg" alt="Pickle Flow Shop"><div class="fcard-info"><span class="tag">Retail</span><h3>Pickle Flow Shop</h3></div></div>
+      <div class="fcard"><img src="exterior.jpg" alt="Our Home"><div class="fcard-info"><span class="tag">Venue</span><h3>Our Home</h3></div></div>
+      <!-- loop dupes -->
+      <div class="fcard"><img src="courts.jpg" alt="Pickleball Arena"><div class="fcard-info"><span class="tag">Sport</span><h3>Pickleball Arena</h3></div></div>
+      <div class="fcard"><img src="cafe.jpg" alt="Café &amp; Social"><div class="fcard-info"><span class="tag">Dining</span><h3>Café &amp; Social</h3></div></div>
+      <div class="fcard"><img src="wellness.jpg" alt="Wellness Studio"><div class="fcard-info"><span class="tag">Wellness</span><h3>Wellness Studio</h3></div></div>
+      <div class="fcard"><img src="shop.jpg" alt="Pickle Flow Shop"><div class="fcard-info"><span class="tag">Retail</span><h3>Pickle Flow Shop</h3></div></div>
+      <div class="fcard"><img src="exterior.jpg" alt="Our Home"><div class="fcard-info"><span class="tag">Venue</span><h3>Our Home</h3></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FACILITY DETAIL: Pickleball Courts ══ -->
+<div class="fdetail rv" id="courts">
+  <div class="fimg"><img src="courts.jpg" alt="Pickleball Courts"></div>
+  <div class="ftxt">
+    <span class="sec-lbl">Sport</span>
+    <h3>Premium Pickleball <em>Arena</em></h3>
+    <p>Three professional indoor courts with AI-powered match recording, automated highlights, and precision line calling. Imported professional surfacing designed for serious competition and social play alike.</p>
+    <ul class="ftxt-list">
+      <li>3 professional indoor courts</li>
+      <li>AI match recording &amp; analytics</li>
+      <li>Automated highlights &amp; line calling</li>
+      <li>Imported professional surfacing</li>
+    </ul>
+    <button class="btn-sm">Book a Court</button>
+  </div>
+</div>
+
+<!-- ══ FACILITY DETAIL: Café ══ -->
+<div class="fdetail reverse rv" id="cafe">
+  <div class="fimg"><img src="cafe.jpg" alt="Café &amp; Social"></div>
+  <div class="ftxt">
+    <span class="sec-lbl">Dining</span>
+    <h3>Café &amp; <em>Social Space</em></h3>
+    <p>Our exclusive F&B partner brings bold flavours and a warm, energetic atmosphere to fuel your game-day and wind-down moments. Designed as the social heart of Pickleflow — expect long evenings and great company.</p>
+    <ul class="ftxt-list">
+      <li>Exclusive F&B partnership</li>
+      <li>Community hangout hub</li>
+      <li>Long dwell-time design</li>
+      <li>Open morning to night</li>
+    </ul>
+    <button class="btn-sm">Explore Menu</button>
+  </div>
+</div>
+
+<!-- ══ FACILITY DETAIL: Wellness ══ -->
+<div class="fdetail rv" id="wellness">
+  <div class="fimg"><img src="wellness.jpg" alt="Wellness Studio"></div>
+  <div class="ftxt">
+    <span class="sec-lbl">Wellness</span>
+    <h3>Wellness <em>Studio</em></h3>
+    <p>Mat Pilates, Yoga, Zumba, and functional fitness led by top-tier instructors. A holistic lifestyle space that goes beyond sport — designed to restore your body, sharpen your mind, and energise your day.</p>
+    <ul class="ftxt-list">
+      <li>Mat Pilates &amp; Yoga</li>
+      <li>Zumba &amp; Strength training</li>
+      <li>Top-tier certified instructors</li>
+      <li>Flexible class schedules</li>
+    </ul>
+    <button class="btn-sm">View Classes</button>
+  </div>
+</div>
+
+<!-- ══ FACILITY DETAIL: Shop ══ -->
+<div class="fdetail reverse rv" id="shop">
+  <div class="fimg"><img src="shop.jpg" alt="Pickle Flow Shop"></div>
+  <div class="ftxt">
+    <span class="sec-lbl">Retail</span>
+    <h3>Pickle Flow <em>Shop</em></h3>
+    <p>Everything you need to look and play your best. From premium pickleball paddles and imported footwear to Pickleflow-branded sportswear — our in-venue shop is curated for the modern player.</p>
+    <ul class="ftxt-list">
+      <li>Pickleball paddles &amp; equipment</li>
+      <li>Imported court footwear</li>
+      <li>Sportswear &amp; accessories</li>
+      <li>Exclusive branded merchandise</li>
+    </ul>
+    <button class="btn-sm">Shop Now</button>
+  </div>
+</div>
+
+<!-- ══ EXPERIENCES — numbered grid ══ -->
+<section class="exp-sec" id="exp">
+  <div class="exp-hdr rv">
+    <span class="sec-lbl">Experiences</span>
+    <h2 class="st">Play <em>your</em> way</h2>
+    <p class="sub">Six reasons to make Pickleflow Social your second home.</p>
+  </div>
+  <div class="exp-grid">
+
+    <div class="ecard rv">
+      <svg class="ecard-svg" width="88" height="88" viewBox="0 0 88 88" fill="none">
+        <circle cx="44" cy="44" r="38" stroke="#b8e034" stroke-width="1" stroke-dasharray="7 4" opacity=".6"><animateTransform attributeName="transform" type="rotate" from="0 44 44" to="360 44 44" dur="12s" repeatCount="indefinite"/></circle>
+        <ellipse cx="30" cy="30" rx="11" ry="15" stroke="#b8e034" stroke-width="1.5" fill="none" opacity=".8" transform="rotate(-30 30 30)"/>
+        <line x1="30" y1="44" x2="44" y2="58" stroke="#b8e034" stroke-width="1.4" opacity=".7"/>
+        <ellipse cx="58" cy="58" rx="11" ry="15" stroke="#b8e034" stroke-width="1.5" fill="none" opacity=".8" transform="rotate(150 58 58)"/>
+        <line x1="58" y1="44" x2="44" y2="30" stroke="#b8e034" stroke-width="1.4" opacity=".7"/>
+      </svg>
+      <span class="ecard-num">01</span>
+      <h3>Social Play</h3>
+      <p>Drop-in sessions, open courts, and community matches every day of the week. Meet your next doubles partner here.</p>
+      <div class="ecard-ghost">01</div><div class="ecard-dot"></div>
+    </div>
+
+    <div class="ecard rv rv1">
+      <svg class="ecard-svg" width="88" height="88" viewBox="0 0 88 88" fill="none">
+        <circle cx="44" cy="44" r="36" stroke="#b8e034" stroke-width="1" stroke-dasharray="4 4" opacity=".5"><animateTransform attributeName="transform" type="rotate" from="360 44 44" to="0 44 44" dur="10s" repeatCount="indefinite"/></circle>
+        <circle cx="44" cy="44" r="22" stroke="#b8e034" stroke-width="1.2" opacity=".6"/>
+        <circle cx="44" cy="44" r="9" stroke="#b8e034" stroke-width="1.5" opacity=".8"/>
+        <circle cx="44" cy="44" r="3" fill="#b8e034" opacity=".9"/>
+        <line x1="44" y1="7" x2="44" y2="18" stroke="#b8e034" stroke-width="1" opacity=".5"/>
+        <line x1="44" y1="70" x2="44" y2="81" stroke="#b8e034" stroke-width="1" opacity=".5"/>
+        <line x1="7" y1="44" x2="18" y2="44" stroke="#b8e034" stroke-width="1" opacity=".5"/>
+        <line x1="70" y1="44" x2="81" y2="44" stroke="#b8e034" stroke-width="1" opacity=".5"/>
+      </svg>
+      <span class="ecard-num">02</span>
+      <h3>Coaching Programs</h3>
+      <p>Train with top-tier coaches. Beginner to advanced programmes tailored for every skill level and ambition.</p>
+      <div class="ecard-ghost">02</div><div class="ecard-dot"></div>
+    </div>
+
+    <div class="ecard rv rv2">
+      <svg class="ecard-svg" width="88" height="88" viewBox="0 0 88 88" fill="none">
+        <circle cx="44" cy="18" r="8" stroke="#b8e034" stroke-width="1.5" opacity=".8"/>
+        <circle cx="18" cy="68" r="8" stroke="#b8e034" stroke-width="1.5" opacity=".8"/>
+        <circle cx="70" cy="68" r="8" stroke="#b8e034" stroke-width="1.5" opacity=".8"/>
+        <line x1="44" y1="26" x2="18" y2="60" stroke="#b8e034" stroke-width="1" opacity=".6"/>
+        <line x1="44" y1="26" x2="70" y2="60" stroke="#b8e034" stroke-width="1" opacity=".6"/>
+        <line x1="26" y1="68" x2="62" y2="68" stroke="#b8e034" stroke-width="1" opacity=".5"/>
+        <circle cx="44" cy="44" r="5" fill="none" stroke="#b8e034" stroke-width="1" opacity=".5"><animate attributeName="r" values="5;8;5" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;.15;.5" dur="2.5s" repeatCount="indefinite"/></circle>
+      </svg>
+      <span class="ecard-num">03</span>
+      <h3>Corporate Events</h3>
+      <p>Team outings, tournaments, and group bookings with exclusive F&amp;B packages tailored for your organisation.</p>
+      <div class="ecard-ghost">03</div><div class="ecard-dot"></div>
+    </div>
+
+    <div class="ecard rv">
+      <svg class="ecard-svg" width="88" height="88" viewBox="0 0 88 88" fill="none">
+        <path d="M30 12h28v28a14 14 0 0 1-28 0V12z" stroke="#b8e034" stroke-width="1.5" opacity=".8"/>
+        <path d="M30 20H16a10 10 0 0 0 14 14" stroke="#b8e034" stroke-width="1.2" opacity=".6"/>
+        <path d="M58 20h14a10 10 0 0 1-14 14" stroke="#b8e034" stroke-width="1.2" opacity=".6"/>
+        <line x1="44" y1="54" x2="44" y2="68" stroke="#b8e034" stroke-width="1.5" opacity=".7"/>
+        <rect x="30" y="68" width="28" height="6" rx="1" stroke="#b8e034" stroke-width="1.2" opacity=".7"/>
+        <circle cx="44" cy="30" r="5" fill="#b8e034" opacity=".3"><animate attributeName="opacity" values=".3;.7;.3" dur="2s" repeatCount="indefinite"/></circle>
+      </svg>
+      <span class="ecard-num">04</span>
+      <h3>Tournaments</h3>
+      <p>Compete in AI-tracked leagues and ranked tournaments with professional analytics. Glory awaits on the court.</p>
+      <div class="ecard-ghost">04</div><div class="ecard-dot"></div>
+    </div>
+
+    <div class="ecard rv rv1">
+      <svg class="ecard-svg" width="88" height="88" viewBox="0 0 88 88" fill="none">
+        <circle cx="44" cy="44" r="16" stroke="#b8e034" stroke-width="1.5" stroke-dasharray="6 3" opacity=".7"><animateTransform attributeName="transform" type="rotate" from="0 44 44" to="360 44 44" dur="8s" repeatCount="indefinite"/></circle>
+        <line x1="44" y1="7" x2="44" y2="18" stroke="#b8e034" stroke-width="2"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin="0s" repeatCount="indefinite"/></line>
+        <line x1="70" y1="18" x2="63" y2="25" stroke="#b8e034" stroke-width="2"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin=".2s" repeatCount="indefinite"/></line>
+        <line x1="81" y1="44" x2="70" y2="44" stroke="#b8e034" stroke-width="2"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin=".4s" repeatCount="indefinite"/></line>
+        <line x1="70" y1="70" x2="63" y2="63" stroke="#b8e034" stroke-width="2"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin=".6s" repeatCount="indefinite"/></line>
+        <line x1="44" y1="81" x2="44" y2="70" stroke="#b8e034" stroke-width="2"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin=".8s" repeatCount="indefinite"/></line>
+        <line x1="18" y1="70" x2="25" y2="63" stroke="#b8e034" stroke-width="2"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin="1s" repeatCount="indefinite"/></line>
+        <line x1="7" y1="44" x2="18" y2="44" stroke="#b8e034" stroke-width="2"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin="1.2s" repeatCount="indefinite"/></line>
+        <line x1="18" y1="18" x2="25" y2="25" stroke="#b8e034" stroke-width="2"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin="1.4s" repeatCount="indefinite"/></line>
+        <circle cx="44" cy="44" r="5" fill="#b8e034" opacity=".8"/>
+      </svg>
+      <span class="ecard-num">05</span>
+      <h3>Private Celebrations</h3>
+      <p>Birthday parties, milestone events, and private hire of the entire venue. Because some moments deserve more.</p>
+      <div class="ecard-ghost">05</div><div class="ecard-dot"></div>
+    </div>
+
+    <div class="ecard rv rv2">
+      <svg class="ecard-svg" width="88" height="88" viewBox="0 0 88 88" fill="none">
+        <line x1="10" y1="10" x2="78" y2="10" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="10" y1="24" x2="78" y2="24" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="10" y1="38" x2="78" y2="38" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="10" y1="52" x2="78" y2="52" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="10" y1="66" x2="78" y2="66" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="10" y1="10" x2="10" y2="78" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="24" y1="10" x2="24" y2="78" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="38" y1="10" x2="38" y2="78" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="52" y1="10" x2="52" y2="78" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <line x1="66" y1="10" x2="66" y2="78" stroke="#b8e034" stroke-width=".5" opacity=".22"/>
+        <path d="M20 50c0-10 6-22 24-22s24 12 24 22c0 6-4 12-10 12H30c-6 0-10-6-10-12z" stroke="#b8e034" stroke-width="1.5" fill="none" opacity=".9"/>
+        <rect x="28" y="46" width="4" height="12" rx="1" fill="#b8e034" opacity=".7"/>
+        <rect x="25" y="49" width="10" height="4" rx="1" fill="#b8e034" opacity=".7"/>
+        <circle cx="54" cy="47" r="2.5" stroke="#b8e034" stroke-width="1.2" opacity=".8"><animate attributeName="opacity" values=".8;.3;.8" dur="1s" begin="0s" repeatCount="indefinite"/></circle>
+        <circle cx="61" cy="52" r="2.5" stroke="#b8e034" stroke-width="1.2" opacity=".8"><animate attributeName="opacity" values=".8;.3;.8" dur="1s" begin=".33s" repeatCount="indefinite"/></circle>
+        <circle cx="54" cy="57" r="2.5" stroke="#b8e034" stroke-width="1.2" opacity=".8"><animate attributeName="opacity" values=".8;.3;.8" dur="1s" begin=".66s" repeatCount="indefinite"/></circle>
+        <circle cx="47" cy="52" r="2.5" stroke="#b8e034" stroke-width="1.2" opacity=".8"><animate attributeName="opacity" values=".8;.3;.8" dur="1s" begin=".16s" repeatCount="indefinite"/></circle>
+      </svg>
+      <span class="ecard-num">06</span>
+      <h3>Gaming Zone</h3>
+      <p>Laser tag, PS5, and VR experiences. Because fun doesn't stop at the court — it only gets more interesting.</p>
+      <div class="ecard-ghost">06</div><div class="ecard-dot"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ SPOTLIGHT ══ -->
+<section class="spotlight">
+  <div class="tilt-wrap rv">
+    <div class="tilt-card" id="tiltCard">
+      <img src="courts.jpg" alt="Professional Pickleball Courts">
+      <div class="tilt-badge">AI-Powered</div>
+    </div>
+  </div>
+  <div class="spot-txt rv rv1">
+    <span class="sec-lbl">Hero Product</span>
+    <h2 class="st">Professional<br>Pickleball <em>Arena</em></h2>
+    <br>
+    <p>Three premium indoor courts with imported professional surfacing, engineered for competition and social play. Our AI-powered system handles match recording, real-time analytics, automated highlights, and precision line calling.</p>
+    <ul class="feat-list">
+      <li>3 professional indoor courts</li>
+      <li>AI match recording &amp; analytics</li>
+      <li>Automated highlights &amp; line calling</li>
+      <li>Imported professional surfacing</li>
+      <li>Leagues, coaching &amp; tournaments</li>
+    </ul>
+    <button class="btn-p">Book a Court</button>
+  </div>
+</section>
+
+<!-- ══ COMMUNITY — exterior.jpg ══ -->
+<section class="community">
+  <div class="comm-bg"></div>
+  <div class="comm-ov"></div>
+  <div class="comm-content rv">
+    <span class="sec-lbl">Join Us</span>
+    <h2>Be Part of the <em>Movement</em></h2>
+    <p>Delhi NCR's most exciting lifestyle destination is here. Get early access, exclusive updates, and be the first to book when we open our doors to the community.</p>
+    <div class="comm-btns">
+      <button class="btn-p">Book Now</button>
+      <button class="btn-g">Enquire Now</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand">
+      <img src="logo.png" alt="Pickleflow Social">
+      <p>Delhi NCR's first premium indoor play, wellness &amp; social destination. Where sport, community and lifestyle come together.</p>
+      <div class="foot-socials">
+        <a href="#" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg></a>
+        <a href="#" aria-label="WhatsApp"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+        <a href="#" aria-label="TikTok"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9a8.18 8.18 0 004.78 1.52V7.07a4.85 4.85 0 01-1.01-.38z"/></svg></a>
+      </div>
+    </div>
+    <div class="foot-col">
+      <h4>Explore</h4>
+      <a href="#">Pickleball Courts</a>
+      <a href="#">Wellness Studio</a>
+      <a href="#">Café &amp; Social</a>
+      <a href="#">Gaming Zone</a>
+      <a href="#">Shop</a>
+    </div>
+    <div class="foot-col">
+      <h4>Experience</h4>
+      <a href="#">Social Play</a>
+      <a href="#">Coaching</a>
+      <a href="#">Tournaments</a>
+      <a href="#">Corporate Events</a>
+      <a href="#">Private Celebrations</a>
+    </div>
+    <div class="foot-col">
+      <h4>Visit</h4>
+      <a href="#">Delhi NCR</a>
+      <a href="#">hello@pickleflowsocial.com</a>
+      <a href="#">Enquire Now</a>
+    </div>
+  </div>
+  <div class="foot-bot">
+    <span>© 2025 Pickleflow Social. All rights reserved.</span>
+    <div style="display:flex;gap:22px"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></div>
+  </div>
+</footer>
+
+<script>
+const cur = document.getElementById('cur');
+document.addEventListener('mousemove', e => { cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+
+const navEl = document.getElementById('nav');
+window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', scrollY > 60));
+
+const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('on'); }), {threshold:.1});
+document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+const tc = document.getElementById('tiltCard');
+const tw = tc?.parentElement;
+if(tw){
+  tw.addEventListener('mousemove', e => {
+    const r=tw.getBoundingClientRect();
+    const dx=(e.clientX-r.left-r.width/2)/(r.width/2);
+    const dy=(e.clientY-r.top-r.height/2)/(r.height/2);
+    tc.style.transform=`rotateY(${dx*11}deg) rotateX(${-dy*11}deg) scale(1.025)`;
+  });
+  tw.addEventListener('mouseleave', () => tc.style.transform='');
+}
+
+const mt = document.getElementById('mtrack');
+if(mt){
+  mt.addEventListener('mouseenter', () => mt.style.animationPlayState='paused');
+  mt.addEventListener('mouseleave', () => mt.style.animationPlayState='running');
+}
+</script>
+</body>
+</html>
